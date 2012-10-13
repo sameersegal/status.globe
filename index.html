@@ -109,18 +109,18 @@ var UserCollection = Backbone.Collection.extend({
   model: User,
 
   userJoin: function(data){
-    var m this.findUser(data.name);
+    var m = this.findUser(data.name);
     if( !m ) {
       this.add(new User(data));
     }
   },
 
   userMove: function(data){
-    var m this.findUser(data.name);
+    var m = this.findUser(data.name);
     if( m ) {
       m.set(data);
     }
-  }
+  },
 
   findUser: function(username){
     return this.models.map(function(d){
@@ -202,7 +202,6 @@ $(function(){
 
    var user1 = new PlaygroundView({collection: userCollection});
    
-   },1000);
 });
 </script>
 </body>
