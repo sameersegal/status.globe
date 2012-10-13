@@ -42,6 +42,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('user_message', function (data) {
     console.log("User has messaged" + data.name + " " + data.message);
     socket.broadcast.emit("user_message", data);
+    socket.emit("user_message", data);
   });
 
   socket.on('user_join', function (data) {

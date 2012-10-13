@@ -291,6 +291,30 @@ var PlaygroundView = Backbone.View.extend({
       .data(data, function(d) { return d.get("name")})
       .exit()
       .remove();
+
+      d3.select(this.el)
+      .selectAll("text")
+      .data(data, function(d) { return d.get("name")})
+      .enter()
+      .append("text")
+      .attr("x",function(d){ return d.get("x")})
+      .attr("y",function(d){ return d.get("y")})
+      .attr("dx",function(d) { return "-" + d.get("name").length*2})
+      .text(function(d) { return d.get("name")});
+
+      d3.select(this.el)
+      .selectAll("text")
+      .data(data, function(d) { return d.get("name")})
+      .transition()
+      .duration(750)
+      .attr("x",function(d){ return d.get("x")})
+      .attr("y",function(d){ return d.get("y")});
+
+      d3.select(this.el)
+      .selectAll("text")
+      .data(data, function(d) { return d.get("name")})
+      .exit()
+      .remove();
    }
 
 });
