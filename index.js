@@ -16,6 +16,16 @@ var allUsers = {};
 
 io.sockets.on('connection', function (socket) {
 
+  var  sendUsers= function(){
+    console.log("sending user");
+    console.log(allUsers);
+    _.each(allUsers.keys, function(user){
+        console.log(user)
+        console.log(_.merge({name:user}, allUsers[user]));
+        socket.emit("user_join", _.merge({name:user}, allUsers[user]));
+      });
+  };
+
   socket.on('user_move', function (data) {
     console.log("User has moved" + data.name);
     socket.broadcast.emit("user_move", data);
@@ -29,15 +39,16 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('user_join', function (data) {
     console.log("User has joined" + data.name);
+    if(!data.color){
+      data.color = _.random(0, 16777215).toString(16);
+    }
     socket.broadcast.emit("user_join", data);
     allUsers[data.name] = _.omit(data, 'name', 'me');
     socket.emit("user_join", data);
     console.log(allUsers);
-    _.each(allUsers.keys, function(user){
-      console.log(user)
-      console.log(_.merge({name:user}, allUsers[user]));
-      socket.emit("user_join", _.merge({name:user}, allUsers[user]));
-    });
+    sendUsers();
   });
+
+  sendUsers();
   console.log("New Connection");
 });
