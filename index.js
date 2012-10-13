@@ -35,6 +35,5 @@ io.sockets.on('connection', function (socket) {
       socket.emit("user_join", allUsers[user]);
     });
   });
-
   console.log("New Connection");
 });
