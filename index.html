@@ -79,7 +79,7 @@
 </script>
 
 <script type="text/template" id="chat-message-template">
-   <label><%= name %></label>: <p><%= status %>
+   <label><%= name %></label>: <p><%= message %>
 </script>
 
 <!-- backbone, underscore -->
@@ -101,7 +101,7 @@ var meModel;
 var chatMessageList = new Backbone.Collection();
 var chatMessageListView;
 
-var socket = io.connect('http://sreeix.status.globe.jit.su/');
+var socket = io.connect('http://localhost');
 socket.on('user_move', function (data) {
   userCollection.userMove(data);
 });
@@ -110,7 +110,7 @@ socket.on('user_join', function (data) {
   userCollection.userJoin(data);
 });
 
-socket.on('chat_message', function(data) {
+socket.on('user_message', function(data) {
   chatMessageList.add(new ChatMessage(data));
 });
 
@@ -122,8 +122,8 @@ function socket_user_join(data) {
     socket.emit("user_join",data);
 }
 
-function socket_chat_status() {
-
+function socket_user_message(msg) {
+    socket.emit("user_message",{msg: message, name: meModel.get("name")});
 }
 
 var User = Backbone.Model.extend({
@@ -305,7 +305,7 @@ $(function(){
   document.addEventListener('keydown', function(){
     var activekeys = KeyboardJS.activeKeys();
     if(_.include(activekeys, 'enter')){
-      socket.emit("user_message", message);
+      socket_user_message(message);
       message = "";
     } else {
       message = message + activekeys[0];

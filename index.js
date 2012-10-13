@@ -19,13 +19,16 @@ io.sockets.on('connection', function (socket) {
   var  sendUsers= function(broadcast){
     console.log("sending user");
     console.log(allUsers);
-    _.each(allUsers.keys, function(user){
+    console.log(_.keys(allUsers));
+    _.each(_.keys(allUsers), function(user){
         console.log(user)
-        console.log(_.merge({name:user}, allUsers[user]));
+        console.log(_.extend({name:user}, allUsers[user]));
         if(broadcast){
-          socket.broadcast.emit("user_join", _.merge({name:user}, allUsers[user]));
+          console.log("broadcasting to everyone")
+          socket.broadcast.emit("user_join", _.extend({name:user}, allUsers[user]));
         } else {
-          socket.emit("user_join", _.merge({name:user}, allUsers[user]));
+          console.log("broadcasting to this ws connection")
+          socket.emit("user_join", _.extend({name:user}, allUsers[user]));
         }
       });
   };
@@ -50,9 +53,9 @@ io.sockets.on('connection', function (socket) {
     allUsers[data.name] = _.omit(data, 'name', 'me');
     socket.emit("user_join", data);
     console.log(allUsers);
-    sendUsers(false);
+    sendUsers(true);
   });
 
-  sendUsers(true);
+  sendUsers(false);
   console.log("New Connection");
 });
