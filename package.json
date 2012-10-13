@@ -4,17 +4,22 @@
   "description": "Shows global status ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "index.js"
   },
-  "dependencies":{
-    "socket.io": "",
-    "express" : "",
-    "underscore" : ""
-    },
+  "dependencies": {
+    "socket.io": "0.9.x",
+    "express": "3.0.0rc5",
+    "underscore": "1.4.x"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/sameersegal/status.globe.git"
   },
   "author": "",
-  "license": "BSD"
+  "license": "BSD",
+  "subdomain": "sreeix.status.globe",
+  "engines": {
+    "node": "0.6.x"
+  }
 }
