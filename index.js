@@ -22,12 +22,18 @@ io.sockets.on('connection', function (socket) {
     allUsers[data.name] = _.omit(data, 'name');
   });
 
+  socket.on('user_message', function (data) {
+    console.log("User has messaged" + data.name + " " + data.message);
+    socket.broadcast.emit("user_message", data);
+  });
+
   socket.on('user_join', function (data) {
     console.log("User has joined" + data.name);
     socket.broadcast.emit("user_join", data);
-    socket.emit("user_join", data);
     allUsers[data.name] = _.omit(data, 'name');
+    _.each(allUsers.keys, function(user){
+      socket.emit("user_join", allUsers[user]);
+    });
   });
-  
-    console.log("New Connection");
+  console.log("New Connection");
 });
