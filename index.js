@@ -30,9 +30,11 @@ io.sockets.on('connection', function (socket) {
   socket.on('user_join', function (data) {
     console.log("User has joined" + data.name);
     socket.broadcast.emit("user_join", data);
-    allUsers[data.name] = _.omit(data, 'name');
+    allUsers[data.name] = _.omit(data, 'name', 'me');
     _.each(allUsers.keys, function(user){
-      socket.emit("user_join", allUsers[user]);
+      console.log(user)
+      console.log(_.merge({name:user}, allUsers[user]));
+      socket.emit("user_join", _.merge({name:user}, allUsers[user]));
     });
   });
   console.log("New Connection");
