@@ -123,7 +123,7 @@ function socket_user_join(data) {
 }
 
 function socket_user_message(msg) {
-    socket.emit("user_message",{msg: message, name: meModel.get("name")});
+    socket.emit("user_message",{message: msg, name: meModel.get("name")});
 }
 
 var User = Backbone.Model.extend({
