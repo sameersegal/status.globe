@@ -62,16 +62,18 @@
 
 var socket = io.connect('http://localhost');
 var userCollection;
-var step = 15;
+var step = 35;
 var myusername = "Sameer";
 
-socket.on('user_move', function (data) {
- userCollection.userMove(data);
-});
 
-socket.on('user_join', function (data) {
- userCollection.userJoin(data);
-});
+
+  socket.on('user_move', function (data) {
+    userCollection.userMove(data);
+    });
+
+    socket.on('user_join', function (data) {
+    userCollection.userJoin(data);
+    });
 
 function socket_user_move(data) {
     socket.emit("user_move",data);
@@ -80,7 +82,6 @@ function socket_user_move(data) {
 function socket_user_join(data) {
     socket.emit("user_join",data);
 }
-
 
 var User = Backbone.Model.extend({
 
@@ -110,20 +111,20 @@ var UserCollection = Backbone.Collection.extend({
 
   userJoin: function(data){
     var m = this.findUser(data.name);
-    if( !m ) {
+    if( !m || m.length == 0 ) {
       this.add(new User(data));
     }
   },
 
   userMove: function(data){
     var m = this.findUser(data.name);
-    if( m ) {
+    if( m && m.length > 0 ) {
       m.set(data);
     }
   },
 
   findUser: function(username){
-    return this.models.map(function(d){
+    return _.filter(this.models, function(d){
       return d.get("name") === username;
     });
   }
@@ -134,7 +135,7 @@ var PlaygroundView = Backbone.View.extend({
    el: "#playground",
 
    initialize: function() {
-     this.collection.on("change",this.render,this);
+     this.collection.on("all",this.render,this);
       this.render();
    },
 
@@ -174,22 +175,27 @@ $(function(){
    KeyboardJS.bind.key('up, down, left, right',
     function(arg1, arg2, key) {
       var me = userCollection.findUser(myusername);
-      switch(key){
-        case "up":
-          me.updateLocation(0,-1);
-        break;
-        case "down":
-          me.updateLocation(0,+1);
-        break;
-        case "left":
-          me.updateLocation(-1,0);
-        break;
-        case "right":
-          me.updateLocation(1,0);
-        break;
-      }
+      if(me) {
+        
+        me = me[0];
 
-      socket_user_move(me.toJSON());
+        switch(key){
+          case "up":
+            me.updateLocation(0,-1);
+          break;
+          case "down":
+            me.updateLocation(0,+1);
+          break;
+          case "left":
+            me.updateLocation(-1,0);
+          break;
+          case "right":
+            me.updateLocation(1,0);
+          break;
+        }
+
+        socket_user_move(me.toJSON());
+      }
 
     }, function() {
 
@@ -197,11 +203,12 @@ $(function(){
     });
 
    userCollection = new UserCollection();
+   
+   var user1 = new PlaygroundView({collection: userCollection});
+
    socket_user_join({name: "Sameer",x:100,y:50});
    socket_user_join({name: "Sreekanth",x:50,y:100});
-
-   var user1 = new PlaygroundView({collection: userCollection});
-   
+ 
 });
 </script>
 </body>
