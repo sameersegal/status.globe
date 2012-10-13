@@ -1,0 +1,19 @@
+{
+  "name": "status.globe",
+  "version": "0.0.0",
+  "description": "Shows global status ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies":{
+    "socket.io": "",
+    "express" : ""
+    },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sameersegal/status.globe.git"
+  },
+  "author": "",
+  "license": "BSD"
+}
