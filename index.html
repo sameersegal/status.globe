@@ -1,0 +1,31 @@
+<html>
+<head>
+ <!-- bootstrap -->
+</head>
+<body>
+
+<div id="playground">
+</div>
+
+<script type="text/html" id="login">
+   <label>Name</label><input type="text" name="name" />
+   <label>Status</label><input type="text" name="status" />
+</script>
+
+<script type="text/html" id="body">
+   <circle cx="<%= x %>" cy="<%= y %>" r="40" stroke="black" stroke-width="2" fill="red"/>
+   <text x="100" y="50" stroke="black" stroke-width="2" "text-anchor"="middle" dx="-15">Boo</text>
+</script>
+
+<!-- backbone, underscore -->
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect('http://status_globe.sameersegal.c9.io');
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+</script>
+
+</body>
+</html>
