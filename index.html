@@ -101,7 +101,7 @@ var meModel;
 var chatMessageList = new Backbone.Collection();
 var chatMessageListView;
 
-var socket = io.connect('http://sreeix.status.globe.jit.su');
+var socket = io.connect('http://localhost');
 socket.on('user_move', function (data) {
   userCollection.userMove(data);
 });
@@ -155,6 +155,7 @@ var UserCollection = Backbone.Collection.extend({
   userJoin: function(data){
 
     if(meModel.get("name") != "" && meModel.get("name") === data.name) {
+      meModel.set(data);
       this.add(meModel);
     } else {
       var m = this.findUser(data.name);
