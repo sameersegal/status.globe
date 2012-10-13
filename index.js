@@ -23,6 +23,7 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('user_join', function (data) {
+    console.log("User has joined" + data.name);
     socket.broadcast.emit("user_join", data);
     allUsers[data.name] = _.omit(data, 'name');
   });
