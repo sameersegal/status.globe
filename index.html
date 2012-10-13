@@ -119,6 +119,7 @@ var UserCollection = Backbone.Collection.extend({
   userMove: function(data){
     var m = this.findUser(data.name);
     if( m && m.length > 0 ) {
+      m = m[0];
       m.set(data);
     }
   },
