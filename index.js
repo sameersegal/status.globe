@@ -40,7 +40,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('user_join', function (data) {
     console.log("User has joined" + data.name);
     if(!data.color){
-      data.color = _.random(0, 16777215).toString(16);
+      data.color ="#" + _.random(0, 16777215).toString(16);
     }
     socket.broadcast.emit("user_join", data);
     allUsers[data.name] = _.omit(data, 'name', 'me');
