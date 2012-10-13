@@ -30,7 +30,7 @@
 
 <div class="row" style="padding:0 30px; min-height: 600px">
   <div class="span11 pull-left" style="height: 600px; background: #F5f5f5; border: 1px solid #DDD; border-radius: 8px;">    
-    <svg id="playground" xmlns="http://www.w3.org/2000/svg" version="1.1"></svg>
+    <svg id="playground" xmlns="http://www.w3.org/2000/svg" version="1.1" height="100%" width="100%"></svg>
   </div>
   <div class="span4 pull-right" style="height: 600px; background: #F5f5f5; border: 1px solid #DDD; border-radius: 8px;">
       // chat history
@@ -56,15 +56,29 @@
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/keyboard.0.2.2.min.js"></script>
 
-<script>
-  var socket = io.connect('http://localhost');
-  socket.on('news', function (data) {
-    console.log(data);
-    socket.emit('my other event', { my: 'data' });
-  });
-</script>
-
 <script type="text/javascript">
+
+var socket = io.connect('http://localhost');
+var userCollection;
+var step = 15;
+var myusername = "Sameer";
+
+socket.on('user_move', function (data) {
+ userCollection.userMove(data);
+});
+
+socket.on('user_join', function (data) {
+ userCollection.userJoin(data);
+});
+
+function socket_user_move(data) {
+    socket.emit("user_move",data);
+}
+
+function socket_user_join(data) {
+    socket.emit("user_join",data);
+}
+
 
 var User = Backbone.Model.extend({
 
@@ -76,33 +90,46 @@ var User = Backbone.Model.extend({
   },
 
   initialize: function(){
-    // this.set({
-    //   name: name,
-    //   x: x,
-    //   y: y,
-    //   r: r
-    // },{slient: true});
+
   },
 
-  randomize: function(){
+  updateLocation: function(xf,yf){
     this.set({
-      x: this.get("x") + (Math.random() - 0.5)*20,
-      y: this.get("y") + (Math.random() - 0.5)*20,
-      r: d3.max([2, this.get("r") + (Math.random() - 0.5)*20]),
+      x: this.get("x") + xf*step,
+      y: this.get("y") + yf*step
+      //r: d3.max([2, this.get("r") + (Math.random() - 0.5)*20]),
     });
   }
 
 });
 
 var UserCollection = Backbone.Collection.extend({
-  model: User
+  model: User,
+
+  userJoin: function(data){
+    var m this.findUser(data.name);
+    if( !m ) {
+      this.add(new User(data));
+    }
+  },
+
+  userMove: function(data){
+    var m this.findUser(data.name);
+    if( m ) {
+      m.set(data);
+    }
+  }
+
+  findUser: function(username){
+    return this.models.map(function(d){
+      return d.get("name") === username;
+    });
+  }
 });
 
 var PlaygroundView = Backbone.View.extend({
 
    el: "#playground",
-
-   //template: _.template($("#user").html()),
 
    initialize: function() {
    	  this.collection.on("change",this.render,this);
@@ -136,8 +163,6 @@ var PlaygroundView = Backbone.View.extend({
       .data(data, function(d) { return d.get("name")})
       .exit()
       .remove();
-      
-      //this.circle.transition().duration(1000).attr("r",this.model.get("x"));
    }
 
 });
@@ -145,24 +170,36 @@ var PlaygroundView = Backbone.View.extend({
 $(function(){
 
    KeyboardJS.bind.key('up, down, left, right',
-    function(arg1, arg2, key){
-      console.debug("You pressed: " + key);
+    function(arg1, arg2, key) {
+      var me = userCollection.findUser(myusername);
+      switch(key){
+        case "up":
+          me.updateLocation(0,-1);
+        break;
+        case "down":
+          me.updateLocation(0,+1);
+        break;
+        case "left":
+          me.updateLocation(-1,0);
+        break;
+        case "right":
+          me.updateLocation(1,0);
+        break;
+      }
+
+      socket_user_move(me.toJSON());
+
     }, function() {
+
+      // TODO ...
     });
 
-   var userCollection = new UserCollection();
-   userCollection.add([
-      new User({name: "Sameer",x:100,y:50,r:5}),
-      new User({name: "Sreekanth",x:50,y:100,r:10})
-    ]);
+   userCollection = new UserCollection();
+   socket_user_join({name: "Sameer",x:100,y:50});
+   socket_user_join({name: "Sreekanth",x:50,y:100});
 
    var user1 = new PlaygroundView({collection: userCollection});
    
-   setInterval(function() {
-     userCollection.each(function(d){
-      d.randomize();
-     })
-    //user1.model.set({x : Math.random()*100});
    },1000);
 });
 
