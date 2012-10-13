@@ -301,7 +301,16 @@ $(function(){
   new MeView({ model: meModel});
 
   chatMessageListView = new ChatListView({collection: chatMessageList});
-  document.bind()
+  var message = ""
+  document.addEventListener('keydown', function(){
+    var activekeys = KeyboardJS.activekeys()
+    if(activekeys === 'enter'){
+      socket.emit("user_message", message);
+      message = "";
+    }else {
+      message = message + activekeys;
+    }
+  });
    KeyboardJS.bind.key('up, down, left, right',
     function(arg1, arg2, key) {
 
