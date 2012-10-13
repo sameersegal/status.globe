@@ -16,13 +16,17 @@ var allUsers = {};
 
 io.sockets.on('connection', function (socket) {
 
-  var  sendUsers= function(){
+  var  sendUsers= function(broadcast){
     console.log("sending user");
     console.log(allUsers);
     _.each(allUsers.keys, function(user){
         console.log(user)
         console.log(_.merge({name:user}, allUsers[user]));
-        socket.emit("user_join", _.merge({name:user}, allUsers[user]));
+        if(broadcast){
+          socket.broadcast.emit("user_join", _.merge({name:user}, allUsers[user]));
+        } else {
+          socket.emit("user_join", _.merge({name:user}, allUsers[user]));
+        }
       });
   };
 
@@ -46,9 +50,9 @@ io.sockets.on('connection', function (socket) {
     allUsers[data.name] = _.omit(data, 'name', 'me');
     socket.emit("user_join", data);
     console.log(allUsers);
-    sendUsers();
+    sendUsers(false);
   });
 
-  sendUsers();
+  sendUsers(true);
   console.log("New Connection");
 });
