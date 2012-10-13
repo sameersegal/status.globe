@@ -1,5 +1,6 @@
 var express = require('express')
   , app =  express()
+  , _ =  require('underscore')
   , server = require('http').createServer(app)
   , io = require('socket.io').listen(server);
 
@@ -11,9 +12,20 @@ app.get('/', function (req, res) {
 
 app.use(express.static(__dirname + '/public'));
 
+var allUsers = {};
+
 io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
+
+  socket.on('user_move', function (data) {
+    console.log("User has moved" + data.name);
+    socket.broadcast.emit("user_move", data);
+    allUsers[data.name] = _.omit(data, 'name');
   });
+
+  socket.on('user_join', function (data) {
+    socket.brodcast.emit("user_join", data);
+    allUsers[data.name] = _.omit(data, 'name');
+  });
+  
+    console.log("New Connection");
 });
