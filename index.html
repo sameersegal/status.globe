@@ -144,9 +144,11 @@ var PlaygroundView = Backbone.View.extend({
 
 $(function(){
 
-   KeyboardJS.bind.key("up",function(){
-      console.debug("Something is pressed");
-   });
+   KeyboardJS.bind.key('up, down, left, right',
+    function(arg1, arg2, key){
+      console.debug("You pressed: " + key);
+    }, function() {
+    });
 
    var userCollection = new UserCollection();
    userCollection.add([
